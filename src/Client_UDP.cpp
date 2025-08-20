@@ -49,10 +49,10 @@ int main ()
    addr04.sin_port = htons(port);
    addr04.sin_addr.s_addr = inet_addr(rasppi04);
    
-   char msg_send01[128] = "Hello, World!";
-   char msg_send02[128] = "Hello, Ikuto!";
-   char msg_send03[128] = "Hello, Udon!";
-   char msg_send04[128] = "Hello, Tarutaru!";
+   char msg_send01[128] = "1";
+   char msg_send02[128] = "1";
+   char msg_send03[128] = "1";
+   char msg_send04[128] = "1";
 
    sendto(sockfd, msg_send01, std::size(msg_send01), 0,(sockaddr*)&addr01,sizeof(addr01)); 
    sendto(sockfd, msg_send02, std::size(msg_send02), 0,(sockaddr*)&addr02,sizeof(addr02));
