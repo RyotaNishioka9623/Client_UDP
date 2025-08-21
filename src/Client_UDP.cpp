@@ -3,9 +3,15 @@
 #include <arpa/inet.h>
 #include <iostream>
 #include <cstring> 
+#include <random>
 
 int main ()
 {
+   std::random_device rd; // 乱数生成の種
+   std::mt19937 gen(rd()); // メルセンヌ・ツイスタ
+   std::uniform_int_distribution<> dist(0, 5); // 0～5の一様分布
+   int random_number = dist(gen);
+
    int port = 1910;
    const char* rasppi01 = "192.168.50.12"; 
    const char* rasppi02 = "192.168.50.56";
@@ -49,10 +55,16 @@ int main ()
    addr04.sin_port = htons(port);
    addr04.sin_addr.s_addr = inet_addr(rasppi04);
    
-   char msg_send01[128] = "1";
-   char msg_send02[128] = "1";
-   char msg_send03[128] = "1";
-   char msg_send04[128] = "1";
+   char msg_send01[128];
+   char msg_send02[128];
+   char msg_send03[128];
+   char msg_send04[128];
+
+   std::snprintf(msg_send01, sizeof(msg_send01), "%d", random_number); // 文字列として格納
+   std::snprintf(msg_send02, sizeof(msg_send02), "%d", random_number);
+   std::snprintf(msg_send03, sizeof(msg_send03), "%d", random_number);
+   std::snprintf(msg_send04, sizeof(msg_send04), "%d", random_number);
+
 
    sendto(sockfd, msg_send01, std::size(msg_send01), 0,(sockaddr*)&addr01,sizeof(addr01)); 
    sendto(sockfd, msg_send02, std::size(msg_send02), 0,(sockaddr*)&addr02,sizeof(addr02));
