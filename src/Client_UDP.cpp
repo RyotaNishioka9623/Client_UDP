@@ -80,6 +80,8 @@ int send_tirger(int video_triger)
    std::snprintf(msg_send03, sizeof(msg_send03), "%d", random_number);
    std::snprintf(msg_send04, sizeof(msg_send04), "%d", random_number);
 
+   std::cout << "送信するメッセージ: " << random_number << std::endl;
+
 
    sendto(sockfd, msg_send01, std::size(msg_send01), 0,(sockaddr*)&addr01,sizeof(addr01)); 
    sendto(sockfd, msg_send02, std::size(msg_send02), 0,(sockaddr*)&addr02,sizeof(addr02));
