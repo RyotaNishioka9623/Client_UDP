@@ -75,6 +75,10 @@ int send_tirger(int video_triger)
    {
       random_number = dist2(gen);
    }
+   else if(video_triger == -1)
+   {
+      random_number = 6; // 待機動画
+   }
    std::snprintf(msg_send01, sizeof(msg_send01), "%d", random_number); // 文字列として格納
    std::snprintf(msg_send02, sizeof(msg_send02), "%d", random_number);
    std::snprintf(msg_send03, sizeof(msg_send03), "%d", random_number);
@@ -144,6 +148,7 @@ int main() {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(now - disableStart).count() > disableDuration) {
                 detectionDisabled = false;
                 std::cout << "検出再開" << std::endl;
+                send_tirger(-1); // 待機動画送信
             } else {
                 //cv::imshow("frame", frame);
                 //cv::imshow("motion", thresh);
