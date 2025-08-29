@@ -145,10 +145,10 @@ int main() {
                 detectionDisabled = false;
                 std::cout << "検出再開" << std::endl;
             } else {
-                cv::imshow("frame", frame);
-                cv::imshow("motion", thresh);
-                if (accumulating) cv::imshow("accumulated", accumulated);
-                if (cv::waitKey(30) == 27) break;
+                //cv::imshow("frame", frame);
+                //cv::imshow("motion", thresh);
+                //if (accumulating) cv::imshow("accumulated", accumulated);
+                //if (cv::waitKey(30) == 27) break;
                 continue;
             }
         }
@@ -156,17 +156,19 @@ int main() {
         bool left_edge = cv::countNonZero(thresh.colRange(0, 10)) > 0;
         bool right_edge = cv::countNonZero(thresh.colRange(frame.cols - 10, frame.cols)) > 0;
 
-        if (left_edge && !enteredFromLeft) {
-            enteredFromLeft = true;
-            std::cout << "左から入場" << std::endl;
-            triger = 0; // 左からの検出
-            send_tirger(triger); // トリガー送信
-        }
-        if (right_edge && !enteredFromRight) {
-            enteredFromRight = true;
-            std::cout << "右から入場" << std::endl;
-            triger = 1; // 右からの検出
-            send_tirger(triger); // トリガー送信
+        if(!accumulating){
+            if (left_edge && !enteredFromLeft) {
+                enteredFromLeft = true;
+                std::cout << "左から入場" << std::endl;
+                triger = 0; // 左からの検出
+                send_tirger(triger); // トリガー送信
+            }
+            else if (right_edge && !enteredFromRight) {
+                enteredFromRight = true;
+                std::cout << "右から入場" << std::endl;
+                triger = 1; // 右からの検出
+                send_tirger(triger); // トリガー送信
+            }
         }
 
         if (!accumulating && (left_edge || right_edge)) {
@@ -198,6 +200,8 @@ int main() {
                     accumulated.release();
                     entrySide.clear();
 
+		    enteredFromLeft = false;
+		    enteredFromRight = false;
                     detectionDisabled = true;
                     disableStart = std::chrono::steady_clock::now();
                 }
@@ -213,11 +217,11 @@ int main() {
             }
         }
 
-      //   cv::imshow("frame", frame);
-      //   cv::imshow("motion", thresh);
-      //   if (accumulating) cv::imshow("accumulated", accumulated);
+         //cv::imshow("frame", frame);
+         //cv::imshow("motion", thresh);
+         //if (accumulating) cv::imshow("accumulated", accumulated);
 
-      //   if (cv::waitKey(30) == 27) break;
+         //if (cv::waitKey(30) == 27) break;
     }
     return 0;
 }

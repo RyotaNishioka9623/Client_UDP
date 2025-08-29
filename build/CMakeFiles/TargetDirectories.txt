@@ -1,0 +1,3 @@
+/home/takemuralab/Client_UDP/build/CMakeFiles/client_udp.dir
+/home/takemuralab/Client_UDP/build/CMakeFiles/edit_cache.dir
+/home/takemuralab/Client_UDP/build/CMakeFiles/rebuild_cache.dir
