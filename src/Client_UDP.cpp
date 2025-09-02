@@ -115,7 +115,7 @@ int main() {
     // 検出無効タイマー
     bool detectionDisabled = false;
     auto disableStart = std::chrono::steady_clock::now();
-    int disableDuration = 3000; // 3秒
+    int disableDuration = 8000; // 8秒
 
     // 動きが最後にあった時間
     auto lastMotionTime = std::chrono::steady_clock::now();
@@ -200,7 +200,7 @@ int main() {
                 if ((entrySide == "right" && bigBox.x < 10) ||
                     (entrySide == "left" && bigBox.x + bigBox.width > frame.cols - 10)) {
 
-                    std::cout << "出場検出 → 累積クリア & 3秒間検出無効" << std::endl;
+                    std::cout << "出場検出 → 累積クリア & 8秒間検出無効" << std::endl;
                     accumulating = false;
                     accumulated.release();
                     entrySide.clear();
