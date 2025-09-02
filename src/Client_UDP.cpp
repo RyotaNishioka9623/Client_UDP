@@ -205,8 +205,8 @@ int main() {
                     accumulated.release();
                     entrySide.clear();
 
-		    enteredFromLeft = false;
-		    enteredFromRight = false;
+		            enteredFromLeft = false;
+		            enteredFromRight = false;
                     detectionDisabled = true;
                     disableStart = std::chrono::steady_clock::now();
                 }
@@ -219,6 +219,7 @@ int main() {
                 accumulated.release();
                 entrySide.clear();
                 std::cout << "累積終了（" << motionTimeout/1000 << "秒間動きなし）" << std::endl;
+                send_tirger(-1); // 待機動画送信
             }
         }
 
