@@ -6,6 +6,8 @@
 #include <cstring> 
 #include <random>
 #include <chrono>
+#include <wiringPi.h>
+using namespace std;
 
 int send_tirger(int video_triger)
 { 
@@ -79,6 +81,7 @@ int send_tirger(int video_triger)
    {
       random_number = 6; // 待機動画
    }
+else if(video_triger == 7) { random_number = 7; }  // シャットダウン指示
    std::snprintf(msg_send01, sizeof(msg_send01), "%d", random_number); // 文字列として格納
    std::snprintf(msg_send02, sizeof(msg_send02), "%d", random_number);
    std::snprintf(msg_send03, sizeof(msg_send03), "%d", random_number);
@@ -97,6 +100,13 @@ int send_tirger(int video_triger)
 }
 
 int main() {
+
+    int buttonPin = 1;  // // wiringPiのピン番号（GPIO18に対応）物理ピンは12
+
+    wiringPiSetup();          // 初期化
+    pinMode(buttonPin, INPUT);
+    pullUpDnControl(buttonPin, PUD_DOWN);  // プルダウン
+
     cv::VideoCapture cap(0);
     if (!cap.isOpened()) {
         std::cerr << "Camera open failed!" << std::endl;
@@ -228,6 +238,41 @@ int main() {
          //if (accumulating) cv::imshow("accumulated", accumulated);
 
          //if (cv::waitKey(30) == 27) break;
+	//----------------------------------------------------
+static int prevButton = LOW;
+
+int buttonState = digitalRead(buttonPin);
+
+// 押した瞬間（立ち上がりエッジ）だけ 7 を送信 → そのままクライアントも電源断
+if (buttonState == HIGH && prevButton == LOW) {
+    cout << "ON" << endl;
+    send_tirger(7);                 // 子機たちへ 7 を送信
+    delay(50);                      // 送信の猶予（UDPなので短めでOK）
+    sync();                         // 任意
+
+    // -------------------------------------------------------------
+    // 1) 最優先: systemd に電源断を依頼（絶対パス）
+	    execl("/usr/bin/systemctl", "systemctl", "poweroff", (char*)nullptr);
+	    perror("[shutdown] exec systemctl poweroff failed");
+	
+	    // 2) フォールバック: shutdown を絶対パスで直叩き
+	    execl("/usr/sbin/shutdown", "shutdown", "-h", "now", (char*)nullptr);
+	    perror("[shutdown] exec /usr/sbin/shutdown -h now failed");
+	
+	    _exit(1); // ここまで来たら両方失敗
+	    // -------------------------------------------------------------
+	}
+	// 離した瞬間（立ち下がりエッジ）のログは任意
+	else if (buttonState == LOW && prevButton == HIGH) {
+    	cout << "OFF" << endl;
+	}
+
+	// 次回比較用に保存
+	prevButton = buttonState;
+
+	//-------------------------------------------------------
+	prevButton = buttonState;
+        delay(100);  // 100ms待機
     }
     return 0;
 }
